@@ -8,6 +8,50 @@
 #include <unistd.h>
 #include <vector>
 
+// Counts the number of 1s in the matrix to determine neccessary amount of pipes
+int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
+  int numOfPipes = 0;
+  for (int i = 0; i < matrix.size(); i++) {
+    for (int j = 0; j < matrix[i].size(); j++) {
+      if (matrix[i][j] == 1)
+        numOfPipes++;
+    }
+  }
+  return numOfPipes;
+}
+
+// Finds all input processes in the matrix, defined as all 0s across the
+// horizontal.
+void findInputs(const std::vector<std::vector<int>> &matrix,
+                std::vector<bool> &inputs) {
+  for (int i = 0; i < matrix.size(); i++) {
+    bool isInput = true;
+    for (int j = 0; j < matrix.size(); j++) {
+      if (matrix[i][j] == 1) {
+        isInput = false;
+      }
+    }
+    if (isInput)
+      inputs[i] = true;
+  }
+}
+
+// Finds all output processes in the matrix, defined as all 0s across the
+// vertical.
+void findOutputs(const std::vector<std::vector<int>> &matrix,
+                 std::vector<bool> &outputs) {
+  for (int i = 0; i < matrix.size(); i++) {
+    bool isInput = true;
+    for (int j = 0; j < matrix.size(); j++) {
+      if (matrix[j][i] == 1) {
+        isInput = false;
+      }
+    }
+    if (isInput)
+      outputs[i] = true;
+  }
+}
+
 int main(int argc, char *args[]) {
   using namespace std;
 
@@ -54,19 +98,36 @@ int main(int argc, char *args[]) {
   }
   inFile1.close();
 
-  // setup necessary amount of pipes, counting number of 1s in matrix
-  int numOfPipes = 0;
-  for (int i = 0; i < matrix.size(); i++) {
-    for (int j = 0; j < matrix[i].size(); j++) {
-      if (matrix[i][j] == 1)
-        numOfPipes++;
-    }
-  }
+  // keep track of which process IDs are inputs and outputs
+  auto inputs = vector<bool>(lines, false);
+  auto outputs = vector<bool>(lines, false);
+  findInputs(matrix, inputs);
+  findOutputs(matrix, outputs);
 
+  for (int i = 0; i < outputs.size(); i++)
+    cout << outputs[i];
+
+  cout << endl;
+
+  // setup necessary amount of pipes, counting number of 1s in matrix
+  int numOfPipes = calcNumOfPipes(matrix);
   auto pipes = vector<int[2]>(numOfPipes);
   for (int i = 0; i < pipes.size(); i++) {
     if (pipe(pipes[i]) < 0) {
-      printf("Cannot make pipes, exiting.");
+      printf("Cannot make pipes, exiting.\n");
+      return 1;
+    }
+  }
+
+  // Forking
+  int processNum = -1;
+  for (int i = 0; i < lines; i++) {
+    int x = fork();
+    if (x == 0) {
+      processNum = i;
+      break;
+    } else if (x < 0) {
+      printf("Unable to fork, exiting.\n");
       return 1;
     }
   }
