@@ -22,12 +22,28 @@ int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
   return numOfPipes;
 }
 
+// Figures out if a process is an initial input, based on the matrix having all
+// 0s across the vertical.
 bool isInput(const std::vector<std::vector<int>> &matrix, int id) {
-  return false;
+  bool success = true;
+  for (int i = 0; i < matrix.size(); i++) {
+    if (matrix[id][i] == 1)
+      success = false;
+  }
+
+  return success;
 }
 
+// Figures out if the process will be a printing process, based on the matrix
+// having all 0s across the horizontal.
 bool isOutput(const std::vector<std::vector<int>> &matrix, int id) {
-  return false;
+  bool success = true;
+  for (int i = 0; i < matrix.size(); i++) {
+    if (matrix[i][id] == 1)
+      success = false;
+  }
+
+  return success;
 }
 
 int main(int argc, char *args[]) {
@@ -91,7 +107,8 @@ int main(int argc, char *args[]) {
   for (int i = 0; i < lines; i++) {
     int x = fork();
     if (x == 0) {
-      processes.push_back(VertexProcess(i, isInput(matrix, i), isOutput(matrix, i)));
+      processes.push_back(
+          VertexProcess(i, isInput(matrix, i), isOutput(matrix, i)));
       break;
     } else if (x < 0) {
       printf("Unable to fork, exiting.\n");
