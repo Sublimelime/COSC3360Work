@@ -10,6 +10,15 @@
 
 #include "VertexProcess.h"
 
+// Function to loop through all pipes created and close them, ensuring no loose
+// ends. Will be called by every process.
+void closeAllPipes(std::vector<int[2]> &pipeVector) {
+  for (unsigned long int i = 0; i < pipeVector.size(); i++) {
+    close(pipeVector[i][0]);
+    close(pipeVector[i][1]);
+  }
+}
+
 // Counts the number of 1s in the matrix to determine neccessary amount of pipes
 int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
   int numOfPipes = 0;
@@ -118,8 +127,6 @@ int main(int argc, char *args[]) {
   }
   inFile2.close();
 
-  for (const auto &wordd : words) // debug print
-    cout << wordd << endl;
 
   // Forking - Store process info into vector of processes for later work
   auto processes = vector<VertexProcess>();
@@ -143,6 +150,8 @@ int main(int argc, char *args[]) {
       return 1;
     }
   }
+
+  closeAllPipes(pipes);
 
   return 0;
 }
