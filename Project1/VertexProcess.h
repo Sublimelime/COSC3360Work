@@ -13,6 +13,8 @@ public:
                  // printing
 
   // holds a list of pipe ids that the process should input from and output onto
+  // this is intended to be mapped 1:1 to `pipes` vector of int[2]'s in main
+  // file.
   std::vector<int> inputs = std::vector<int>();
   std::vector<int> outputs = std::vector<int>();
 
@@ -21,7 +23,7 @@ public:
 
   // Configures `inputs` depending on provided matrix.
   void determineInputs(const std::vector<std::vector<int>> &matrix) {
-    for (int i = 0; i < matrix.size(); i++) {
+    for (long unsigned int i = 0; i < matrix.size(); i++) {
       if (matrix[i][id] == 1)
         inputs.push_back(i);
     }
@@ -29,7 +31,7 @@ public:
 
   // Configures `outputs` depending on provided matrix.
   void determineOutputs(const std::vector<std::vector<int>> &matrix) {
-    for (int i = 0; i < matrix.size(); i++) {
+    for (long unsigned int i = 0; i < matrix.size(); i++) {
       if (matrix[id][i] == 1)
         outputs.push_back(i);
     }

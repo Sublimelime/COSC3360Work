@@ -13,8 +13,8 @@
 // Counts the number of 1s in the matrix to determine neccessary amount of pipes
 int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
   int numOfPipes = 0;
-  for (int i = 0; i < matrix.size(); i++) {
-    for (int j = 0; j < matrix[i].size(); j++) {
+  for (long unsigned int i = 0; i < matrix.size(); i++) {
+    for (long unsigned int j = 0; j < matrix[i].size(); j++) {
       if (matrix[i][j] == 1)
         numOfPipes++;
     }
@@ -26,7 +26,7 @@ int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
 // 0s across the vertical.
 bool isInput(std::vector<std::vector<int>> &matrix, int id) {
   bool success = true;
-  for (int i = 0; i < matrix.size(); i++) {
+  for (long unsigned int i = 0; i < matrix.size(); i++) {
     if (matrix[i][id] == 1)
       success = false;
   }
@@ -38,7 +38,7 @@ bool isInput(std::vector<std::vector<int>> &matrix, int id) {
 // having all 0s across the horizontal.
 bool isOutput(std::vector<std::vector<int>> &matrix, int id) {
   bool success = true;
-  for (int i = 0; i < matrix.size(); i++) {
+  for (long unsigned int i = 0; i < matrix.size(); i++) {
     if (matrix[id][i] == 1)
       success = false;
   }
@@ -62,18 +62,18 @@ int main(int argc, char *args[]) {
   }
 
   // get size of 2d array to make
-  int lines = 0;
+  int numOfProcesses = 0;
   string unused;
   while (inFile1) {
     getline(inFile1, unused);
-    lines++;
+    numOfProcesses++;
   }
-  lines--; // Remove extra line
+  numOfProcesses--; // Remove extra line
   inFile1.close();
 
-  auto matrix = vector<vector<int>>(lines);
-  for (int i = 0; i < lines; i++) {
-    matrix.at(i) = vector<int>(lines, 0);
+  auto matrix = vector<vector<int>>(numOfProcesses);
+  for (int i = 0; i < numOfProcesses; i++) {
+    matrix.at(i) = vector<int>(numOfProcesses, 0);
   }
 
   // read in values from file
@@ -82,7 +82,7 @@ int main(int argc, char *args[]) {
   int readingY = 0, readingX = 0;
   while (inFile1) {
     getline(inFile1, lineRead);
-    for (int i = 0; i < lineRead.length(); i += 2) {
+    for (long unsigned int i = 0; i < lineRead.length(); i += 2) {
       // prevent it being converted to the ascii code
       matrix.at(readingY).at(readingX) = lineRead[i] - '0';
       readingX++;
@@ -94,8 +94,8 @@ int main(int argc, char *args[]) {
 
   // setup necessary amount of pipes, counting number of 1s in matrix
   int numOfPipes = calcNumOfPipes(matrix);
-  auto pipes = vector<int[2]>(numOfPipes);
-  for (int i = 0; i < pipes.size(); i++) {
+  auto pipes = vector<int[2]>(numOfPipes); //vector to hold pipe descriptors
+  for (long unsigned int i = 0; i < pipes.size(); i++) {
     if (pipe(pipes[i]) < 0) {
       printf("Cannot make pipes, exiting.\n");
       return 1;
@@ -104,7 +104,7 @@ int main(int argc, char *args[]) {
 
   // Forking - Store process info into vector of processes for later work
   auto processes = vector<VertexProcess>();
-  for (int i = 0; i < lines; i++) {
+  for (int i = 0; i < numOfProcesses; i++) {
     auto proc = VertexProcess(i, isInput(matrix, i), isOutput(matrix, i));
     if (!proc.isInitialInput)
       proc.determineInputs(matrix);
@@ -114,7 +114,7 @@ int main(int argc, char *args[]) {
   }
 
   int myID = -1;
-  for (int i = 0; i < lines; i++) {
+  for (int i = 0; i < numOfProcesses; i++) {
     int x = fork();
     if (x == 0) {
       myID = i;
