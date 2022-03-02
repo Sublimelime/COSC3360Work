@@ -94,13 +94,32 @@ int main(int argc, char *args[]) {
 
   // setup necessary amount of pipes, counting number of 1s in matrix
   int numOfPipes = calcNumOfPipes(matrix);
-  auto pipes = vector<int[2]>(numOfPipes); //vector to hold pipe descriptors
+  auto pipes = vector<int[2]>(numOfPipes); // vector to hold pipe descriptors
   for (long unsigned int i = 0; i < pipes.size(); i++) {
     if (pipe(pipes[i]) < 0) {
       printf("Cannot make pipes, exiting.\n");
       return 1;
     }
   }
+
+  // Read words from second file in
+  auto words = vector<string>();
+  inFile2.open(args[2], ios::in);
+  if (!inFile2.is_open()) {
+    printf("Unable to open file 2 for reading, exiting.\n");
+    return 1;
+  }
+  string word;
+  while (inFile2 >> word) {
+    if (word[word.length() - 1] == ',') { // Really wish C++ had .EndsWith()
+      word.erase(word.length() - 1, 1);   // chop off comma
+    }
+    words.push_back(word);
+  }
+  inFile2.close();
+
+  for (const auto &wordd : words) // debug print
+    cout << wordd << endl;
 
   // Forking - Store process info into vector of processes for later work
   auto processes = vector<VertexProcess>();
