@@ -18,6 +18,22 @@ public:
 
   VertexProcess(int id, bool isInput, bool isOutput)
       : id(id), isInitialInput(isInput), isOutput(isOutput) {}
+
+  // Configures `inputs` depending on provided matrix.
+  void determineInputs(const std::vector<std::vector<int>> &matrix) {
+    for (int i = 0; i < matrix.size(); i++) {
+      if (matrix[i][id] == 1)
+        inputs.push_back(i);
+    }
+  }
+
+  // Configures `outputs` depending on provided matrix.
+  void determineOutputs(const std::vector<std::vector<int>> &matrix) {
+    for (int i = 0; i < matrix.size(); i++) {
+      if (matrix[id][i] == 1)
+        outputs.push_back(i);
+    }
+  }
 };
 
 #endif // VERTEXPROCESS_H

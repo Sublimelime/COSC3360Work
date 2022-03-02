@@ -24,7 +24,7 @@ int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
 
 // Figures out if a process is an initial input, based on the matrix having all
 // 0s across the vertical.
-bool isInput(const std::vector<std::vector<int>> &matrix, int id) {
+bool isInput(std::vector<std::vector<int>> &matrix, int id) {
   bool success = true;
   for (int i = 0; i < matrix.size(); i++) {
     if (matrix[i][id] == 1)
@@ -36,7 +36,7 @@ bool isInput(const std::vector<std::vector<int>> &matrix, int id) {
 
 // Figures out if the process will be a printing process, based on the matrix
 // having all 0s across the horizontal.
-bool isOutput(const std::vector<std::vector<int>> &matrix, int id) {
+bool isOutput(std::vector<std::vector<int>> &matrix, int id) {
   bool success = true;
   for (int i = 0; i < matrix.size(); i++) {
     if (matrix[id][i] == 1)
@@ -105,8 +105,12 @@ int main(int argc, char *args[]) {
   // Forking - Store process info into vector of processes for later work
   auto processes = vector<VertexProcess>();
   for (int i = 0; i < lines; i++) {
-    processes.push_back(
-        VertexProcess(i, isInput(matrix, i), isOutput(matrix, i)));
+    auto proc = VertexProcess(i, isInput(matrix, i), isOutput(matrix, i));
+    if (!proc.isInitialInput)
+      proc.determineInputs(matrix);
+    if (!proc.isOutput)
+      proc.determineOutputs(matrix);
+    processes.push_back(proc);
   }
 
   int myID = -1;
