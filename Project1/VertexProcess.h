@@ -6,20 +6,24 @@
 
 class VertexProcess {
 public:
+  // ID of the process, created during forking
   int id;
-  bool isInitialInput; // Determines whether the process is an initial input
-                       // that will be inputting from file2
-  bool isOutput; // determines whether the process is an output that will be
-                 // printing
+
+  // Determines whether the process is an initial input that will input words to
+  // the system
+  bool isInitialInput;
+
+  // determines whether the process is an output that will be printing
+  bool isFinalOutput;
 
   // holds a list of pipe ids that the process should input from and output onto
   // this is intended to be mapped 1:1 to `pipes` vector of int[2]'s in main
-  // file.
+  // file, with inputs[1] corresponding to pipes[1], etc.
   std::vector<int> inputs = std::vector<int>();
   std::vector<int> outputs = std::vector<int>();
 
   VertexProcess(int id, bool isInput, bool isOutput)
-      : id(id), isInitialInput(isInput), isOutput(isOutput) {}
+      : id(id), isInitialInput(isInput), isFinalOutput(isOutput) {}
 
   // Configures `inputs` depending on provided matrix.
   void determineInputs(const std::vector<std::vector<int>> &matrix) {

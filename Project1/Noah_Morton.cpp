@@ -127,14 +127,13 @@ int main(int argc, char *args[]) {
   }
   inFile2.close();
 
-
   // Forking - Store process info into vector of processes for later work
   auto processes = vector<VertexProcess>();
   for (int i = 0; i < numOfProcesses; i++) {
     auto proc = VertexProcess(i, isInput(matrix, i), isOutput(matrix, i));
     if (!proc.isInitialInput)
       proc.determineInputs(matrix);
-    if (!proc.isOutput)
+    if (!proc.isFinalOutput)
       proc.determineOutputs(matrix);
     processes.push_back(proc);
   }
@@ -151,7 +150,8 @@ int main(int argc, char *args[]) {
     }
   }
 
-  closeAllPipes(pipes);
+  // Processes diverge here, depending on ID and information in `proccesses`
 
+  closeAllPipes(pipes); // Pipe cleanup
   return 0;
 }
