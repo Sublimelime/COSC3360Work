@@ -22,36 +22,12 @@ int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
   return numOfPipes;
 }
 
-// Finds all input processes in the matrix, defined as all 0s across the
-// vertical
-void findInputs(const std::vector<std::vector<int>> &matrix,
-                std::vector<bool> &inputs) {
-  for (int i = 0; i < matrix.size(); i++) {
-    bool isInput = true;
-    for (int j = 0; j < matrix.size(); j++) {
-      if (matrix[j][i] == 1) {
-        isInput = false;
-      }
-    }
-    if (isInput)
-      inputs[i] = true;
-  }
+bool isInput(const std::vector<std::vector<int>> &matrix, int id) {
+  return false;
 }
 
-// Finds all output processes in the matrix, defined as all 0s across the
-// horizontal
-void findOutputs(const std::vector<std::vector<int>> &matrix,
-                 std::vector<bool> &outputs) {
-  for (int i = 0; i < matrix.size(); i++) {
-    bool isInput = true;
-    for (int j = 0; j < matrix.size(); j++) {
-      if (matrix[i][j] == 1) {
-        isInput = false;
-      }
-    }
-    if (isInput)
-      outputs[i] = true;
-  }
+bool isOutput(const std::vector<std::vector<int>> &matrix, int id) {
+  return false;
 }
 
 int main(int argc, char *args[]) {
@@ -100,15 +76,6 @@ int main(int argc, char *args[]) {
   }
   inFile1.close();
 
-  // keep track of which process IDs are inputs and outputs
-  auto inputs = vector<bool>(lines, false);
-  auto outputs = vector<bool>(lines, false);
-  findInputs(matrix, inputs);
-  findOutputs(matrix, outputs);
-
-
-  cout << endl;
-
   // setup necessary amount of pipes, counting number of 1s in matrix
   int numOfPipes = calcNumOfPipes(matrix);
   auto pipes = vector<int[2]>(numOfPipes);
@@ -119,12 +86,12 @@ int main(int argc, char *args[]) {
     }
   }
 
-  // Forking
-  int processNum = -1;
+  // Forking - Store process info into vector of processes for later work
+  auto processes = vector<VertexProcess>();
   for (int i = 0; i < lines; i++) {
     int x = fork();
     if (x == 0) {
-      processNum = i;
+      processes.push_back(VertexProcess(i, isInput(matrix, i), isOutput(matrix, i)));
       break;
     } else if (x < 0) {
       printf("Unable to fork, exiting.\n");
