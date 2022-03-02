@@ -27,7 +27,7 @@ int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
 bool isInput(const std::vector<std::vector<int>> &matrix, int id) {
   bool success = true;
   for (int i = 0; i < matrix.size(); i++) {
-    if (matrix[id][i] == 1)
+    if (matrix[i][id] == 1)
       success = false;
   }
 
@@ -39,7 +39,7 @@ bool isInput(const std::vector<std::vector<int>> &matrix, int id) {
 bool isOutput(const std::vector<std::vector<int>> &matrix, int id) {
   bool success = true;
   for (int i = 0; i < matrix.size(); i++) {
-    if (matrix[i][id] == 1)
+    if (matrix[id][i] == 1)
       success = false;
   }
 
@@ -105,10 +105,15 @@ int main(int argc, char *args[]) {
   // Forking - Store process info into vector of processes for later work
   auto processes = vector<VertexProcess>();
   for (int i = 0; i < lines; i++) {
+    processes.push_back(
+        VertexProcess(i, isInput(matrix, i), isOutput(matrix, i)));
+  }
+
+  int myID = -1;
+  for (int i = 0; i < lines; i++) {
     int x = fork();
     if (x == 0) {
-      processes.push_back(
-          VertexProcess(i, isInput(matrix, i), isOutput(matrix, i)));
+      myID = i;
       break;
     } else if (x < 0) {
       printf("Unable to fork, exiting.\n");
