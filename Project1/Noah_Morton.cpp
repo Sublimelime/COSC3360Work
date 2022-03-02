@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include "VertexProcess.h"
+
 // Counts the number of 1s in the matrix to determine neccessary amount of pipes
 int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
   int numOfPipes = 0;
@@ -21,13 +23,13 @@ int calcNumOfPipes(const std::vector<std::vector<int>> &matrix) {
 }
 
 // Finds all input processes in the matrix, defined as all 0s across the
-// horizontal.
+// vertical
 void findInputs(const std::vector<std::vector<int>> &matrix,
                 std::vector<bool> &inputs) {
   for (int i = 0; i < matrix.size(); i++) {
     bool isInput = true;
     for (int j = 0; j < matrix.size(); j++) {
-      if (matrix[i][j] == 1) {
+      if (matrix[j][i] == 1) {
         isInput = false;
       }
     }
@@ -37,13 +39,13 @@ void findInputs(const std::vector<std::vector<int>> &matrix,
 }
 
 // Finds all output processes in the matrix, defined as all 0s across the
-// vertical.
+// horizontal
 void findOutputs(const std::vector<std::vector<int>> &matrix,
                  std::vector<bool> &outputs) {
   for (int i = 0; i < matrix.size(); i++) {
     bool isInput = true;
     for (int j = 0; j < matrix.size(); j++) {
-      if (matrix[j][i] == 1) {
+      if (matrix[i][j] == 1) {
         isInput = false;
       }
     }
@@ -104,8 +106,6 @@ int main(int argc, char *args[]) {
   findInputs(matrix, inputs);
   findOutputs(matrix, outputs);
 
-  for (int i = 0; i < outputs.size(); i++)
-    cout << outputs[i];
 
   cout << endl;
 
