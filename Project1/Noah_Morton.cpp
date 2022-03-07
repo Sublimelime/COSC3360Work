@@ -142,8 +142,8 @@ int main(int argc, char *args[]) {
   for (int i = 0; i < processes.size(); i++) {
     if (processes.at(i).isInitialInput) {
       processes.at(i).myWord = words.front();
-      words.erase(
-          words.begin()); // remove word from list of words once it's assigned
+      // remove word from list of words once it's assigned
+      words.erase(words.begin());
     }
   }
 
@@ -167,11 +167,21 @@ int main(int argc, char *args[]) {
     for (int i = 0; i < myOutputs.size(); i++) {
       write(pipes[myOutputs[i]][1], processes.at(myID).myWord.c_str(),
             processes.at(myID).myWord.length() + 1);
-      close(pipes[myOutputs[i]][1]); //close pipe written to
+      close(pipes[myOutputs[i]][1]); // close pipe written to
     }
-  } else if (processes.at(myID).isFinalOutput) { //final output process, printer
+  } else if (processes.at(myID).isFinalOutput) { // final output printer
+    char sentenceRead[100];
+    auto &myInputs = processes.at(myID).inputs;
+    for (int i = 0; i < myInputs.size(); i++) {
+      // close write end
+      close(pipes[myInputs[i]][1]);
+      read(pipes[myInputs[i]][0], sentenceRead, 100);
+    }
 
-  } else { //connecting process
+    // word processing stuff I don't have time to do
+
+    printf("%s\n", sentenceRead);
+  } else { // connecting process
 
   }
 
