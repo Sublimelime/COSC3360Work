@@ -138,6 +138,15 @@ int main(int argc, char *args[]) {
     processes.push_back(proc);
   }
 
+  // assign words to initial inputs
+  for (int i = 0; i < processes.size(); i++) {
+    if (processes.at(i).isInitialInput) {
+      processes.at(i).myWord = words.front();
+      words.erase(
+          words.begin()); // remove word from list of words once it's assigned
+    }
+  }
+
   int myID = -1;
   for (int i = 0; i < numOfProcesses; i++) {
     int x = fork();
@@ -151,6 +160,20 @@ int main(int argc, char *args[]) {
   }
 
   // Processes diverge here, depending on ID and information in `proccesses`
+
+  if (processes.at(myID).isInitialInput) {
+    close(pipes[myID][0]); // close read end
+    auto &myOutputs = processes.at(myID).outputs;
+    for (int i = 0; i < myOutputs.size(); i++) {
+      write(pipes[myOutputs[i]][1], processes.at(myID).myWord.c_str(),
+            processes.at(myID).myWord.length() + 1);
+      close(pipes[myOutputs[i]][1]); //close pipe written to
+    }
+  } else if (processes.at(myID).isFinalOutput) { //final output process, printer
+
+  } else { //connecting process
+
+  }
 
   closeAllPipes(pipes); // Pipe cleanup
   return 0;

@@ -2,6 +2,7 @@
 #ifndef VERTEXPROCESS_H
 #define VERTEXPROCESS_H
 
+#include <string>
 #include <vector>
 
 class VertexProcess {
@@ -21,6 +22,10 @@ public:
   // file, with inputs[1] corresponding to pipes[1], etc.
   std::vector<int> inputs = std::vector<int>();
   std::vector<int> outputs = std::vector<int>();
+
+  // holds the word the process is supposed to initially write, if
+  // isInitialInput is true.
+  std::string myWord;
 
   VertexProcess(int id, bool isInput, bool isOutput)
       : id(id), isInitialInput(isInput), isFinalOutput(isOutput) {}
