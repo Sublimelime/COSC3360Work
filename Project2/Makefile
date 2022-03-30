@@ -9,8 +9,13 @@ ${EXEC} : ${OBJECTS}
 
 -include ${DEPENDS}
 
+# Remove files created by compilation, also close processes/semaphores
+# left open
 clean:
 	-rm *.o *.d project2
+	ipcs -q | awk '{ print "ipcrm -q "$2}' | sh > /dev/null 2>&1;
+	ipcs -m | awk '{ print "ipcrm -m "$2}' | sh > /dev/null 2>&1;
+	ipcs -s | awk '{ print "ipcrm -s "$2}' | sh > /dev/null 2>&1;
 
 TAGS: project2
 	unitags -eR *
