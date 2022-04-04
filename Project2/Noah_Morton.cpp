@@ -1,12 +1,13 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
-#include <stdlib.h>
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
+#include <sys/shm.h>
+#include <sys/sem.h>
 
 int main(int argc, char **args) {
   using namespace std;
@@ -27,10 +28,11 @@ int main(int argc, char **args) {
   auto commandFileLines = vector<string>();
   string line;
 
-  //read in all lines from file
+  // read in all lines from file
   while (inFile1) {
     getline(inFile1, line);
-    commandFileLines.push_back(line);
+    if (line != "") // ignore empty lines
+      commandFileLines.push_back(line);
   }
   inFile1.close();
 
