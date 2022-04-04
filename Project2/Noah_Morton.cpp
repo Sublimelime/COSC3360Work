@@ -38,19 +38,31 @@ int main(int argc, char **args) {
   }
   inFile1.close();
 
+  // Keeps track of max resources available for each resource
+  auto resourcesAvailable = vector<int>(stoi(commandFileLines.at(0)), 0);
   // holds ProcessInfos of each process
   auto processes = vector<ProcessInfo>(stoi(commandFileLines.at(1)));
 
   // read available and max usage of resources per process, store this info
   for (int i = 2; i < commandFileLines.size(); i++) {
-    if (commandFileLines.at(i).substr(0, 4) == "available") {
-
+    if (commandFileLines.at(i).substr(0, 8) == "available") {
+      // going to just assume no more than 9
+      int resource = commandFileLines.at(i)[10];
+      int maximum = commandFileLines.at(i)[13];
+      resourcesAvailable.at(resource) = maximum;
     } else if (commandFileLines.at(i).substr(0, 2) == "max") {
-    }
+      // going to just assume no more than 9, one digit
+      int process = commandFileLines.at(i)[4];
+      int resource = commandFileLines.at(i)[6];
+      int resourceMax = commandFileLines.at(i)[9];
+      processes.at(process).resourceMaximums.at(resource) = resourceMax;
+    } else
+      break;
   }
 
   // read each process's commands, deadline and processing time into its
   // ProcessInfo
+  int processBeingRead = 0;
   for (int i = 2; i < commandFileLines.size(); i++) {
   }
 
