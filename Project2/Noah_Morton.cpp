@@ -2,12 +2,14 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sys/sem.h>
+#include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <vector>
-#include <sys/shm.h>
-#include <sys/sem.h>
+
+#include "ProcessInfo.h"
 
 int main(int argc, char **args) {
   using namespace std;
@@ -36,5 +38,29 @@ int main(int argc, char **args) {
   }
   inFile1.close();
 
+  // holds ProcessInfos of each process
+  auto processes = vector<ProcessInfo>(stoi(commandFileLines.at(1)));
 
+  // read available and max usage of resources per process, store this info
+  for (int i = 2; i < commandFileLines.size(); i++) {
+    if (commandFileLines.at(i).substr(0, 4) == "available") {
+
+    } else if (commandFileLines.at(i).substr(0, 2) == "max") {
+    }
+  }
+
+  // read each process's commands, deadline and processing time into its
+  // ProcessInfo
+  for (int i = 2; i < commandFileLines.size(); i++) {
+  }
+
+  int pnum = -1;
+  int pid;
+  for (int k = 0; k < processes.size(); k++) {
+    pid = fork();
+    if (pid == 0) {
+      pnum = k;
+      break;
+    }
+  }
 }
