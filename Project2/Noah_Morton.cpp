@@ -44,6 +44,7 @@ int main(int argc, char **args) {
   auto processes = vector<ProcessInfo>(stoi(commandFileLines.at(1)));
 
   // read available and max usage of resources per process, store this info
+  int processInstructionBeginPoint;
   for (int i = 2; i < commandFileLines.size(); i++) {
     if (commandFileLines.at(i).substr(0, 8) == "available") {
       // going to just assume no more than 9
@@ -56,14 +57,24 @@ int main(int argc, char **args) {
       int resource = commandFileLines.at(i)[6];
       int resourceMax = commandFileLines.at(i)[9];
       processes.at(process).resourceMaximums.at(resource) = resourceMax;
-    } else
+    } else { // found where the process instructions begin
+      processInstructionBeginPoint = i;
       break;
+    }
   }
 
   // read each process's commands, deadline and processing time into its
   // ProcessInfo
   int processBeingRead = 0;
-  for (int i = 2; i < commandFileLines.size(); i++) {
+  for (int i = processInstructionBeginPoint; i < commandFileLines.size(); i++) {
+    string line = commandFileLines.at(i);
+    if (line.substr(0, 6) == "process") {
+      processBeingRead = line[8];
+    } else if (line.substr(0, 7) == "deadline") {
+      processes.at(processBeingRead).deadline = line[9];
+    } else { //got a command
+      processes.at(processBeingRead).commands.push_back(line);
+    }
   }
 
   int pnum = -1;
