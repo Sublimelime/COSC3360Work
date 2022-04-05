@@ -82,9 +82,9 @@ int main(int argc, char **args) {
 
       // sanity check
       if (currentProcess.deadline < currentProcess.computationTime) {
-        printf(
-            "Process %d's computation time exceeds deadline. Impossible input.\n",
-            processBeingRead);
+        printf("Process %d's computation time exceeds deadline. Impossible "
+               "input.\n",
+               processBeingRead);
         return 1;
       }
 
@@ -111,6 +111,36 @@ int main(int argc, char **args) {
       wordsFileLines.push_back(inFile2Line);
   }
   inFile2.close();
+
+  // parse lines into Resources
+  auto resources = vector<Resource>(wordsFileLines.size());
+  for (int i = 0; i < wordsFileLines.size(); i++) {
+    string currentLine = wordsFileLines.at(i);
+    // get type ------------
+    string type = "";
+    int entriesBeginAt;
+    for (int x = 4; x < currentLine.length(); x++) {
+      if (currentLine[x] == ':') {
+        entriesBeginAt = x + 2;
+        break;
+      }
+      // adding character by character until we hit `:`
+      type += currentLine[x];
+    }
+    resources.at(i).type = type;
+
+    // get entries --------------
+    string entry = "";
+    for (int x = entriesBeginAt; x < currentLine.length(); x++) {
+      if (currentLine[x] == ',') {
+        // when we hit a comma we finalize the entry and shift to the next
+        resources.at(i).entries.push_back(entry);
+        x += 2;
+      } else {
+        entry += currentLine[x];
+      }
+    }
+  }
 
   return 0;
 

@@ -3,7 +3,14 @@
 #define HELPERFUNCTIONS_H
 
 #include <string>
+#include <vector>
 
+//small struct to hold info about a resource
+struct Resource {
+ public:
+  std::string type;
+  std::vector<std::string> entries = std::vector<std::string>();
+};
 
 // Returns true if a string starts with a number.
 bool lineStartsWithNum(std::string line) {
