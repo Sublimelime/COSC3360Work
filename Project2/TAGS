@@ -1,0 +1,33 @@
+
+Makefile,236
+CXX = g++CXX1,0
+OBJECTS = Noah_Morton.oOBJECTS3,35
+DEPENDS = ${OBJECTS:.o=.d}    # substitutes ".o" with ".d"DEPENDS4,59
+EXEC = project2EXEC5,118
+${EXEC} : ${OBJECTS}${EXEC}7,135
+clean:clean14,291
+TAGS: project2TAGS20,510
+
+many.txt,0
+
+many_words.txt,0
+
+Noah_Morton.cpp,46
+int main(int argc, char **args) {main14,227
+
+Noah_Morton.d,0
+
+ProcessInfo.h,348
+#define PROCESSINFO_HPROCESSINFO_H3,39
+class ProcessInfo {ProcessInfo9,120
+  std::vector<std::string> commands = std::vector<std::string>();commands12,193
+  std::vector<int> resourceMaximums = std::vector<int>();resourceMaximums14,298
+  int deadline, computationTime;deadline17,368
+  int deadline, computationTime;computationTime17,368
+
+project2,0
+
+readme.md,100
+## Building:Building:4,61
+## Running:Running:12,367
+## Potential issuesPotential issues18,462

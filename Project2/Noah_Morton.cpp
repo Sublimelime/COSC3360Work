@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <vector>
 
+#include "HelperFunctions.h"
 #include "ProcessInfo.h"
 
 int main(int argc, char **args) {
@@ -48,14 +49,14 @@ int main(int argc, char **args) {
   for (int i = 2; i < commandFileLines.size(); i++) {
     if (commandFileLines.at(i).substr(0, 8) == "available") {
       // going to just assume no more than 9
-      int resource = commandFileLines.at(i)[10];
-      int maximum = commandFileLines.at(i)[13];
+      int resource = commandFileLines.at(i)[10] - '0';
+      int maximum = commandFileLines.at(i)[13] - '0';
       resourcesAvailable.at(resource) = maximum;
     } else if (commandFileLines.at(i).substr(0, 2) == "max") {
       // going to just assume no more than 9, one digit
-      int process = commandFileLines.at(i)[4];
-      int resource = commandFileLines.at(i)[6];
-      int resourceMax = commandFileLines.at(i)[9];
+      int process = commandFileLines.at(i)[4] - '0';
+      int resource = commandFileLines.at(i)[6] - '0';
+      int resourceMax = commandFileLines.at(i)[9] - '0';
       processes.at(process).resourceMaximums.at(resource) = resourceMax;
     } else { // found where the process instructions begin
       processInstructionBeginPoint = i;
@@ -68,14 +69,32 @@ int main(int argc, char **args) {
   int processBeingRead = 0;
   for (int i = processInstructionBeginPoint; i < commandFileLines.size(); i++) {
     string line = commandFileLines.at(i);
-    if (line.substr(0, 6) == "process") {
-      processBeingRead = line[8];
-    } else if (line.substr(0, 7) == "deadline") {
-      processes.at(processBeingRead).deadline = line[9];
-    } else { //got a command
+    if (line.substr(0, 7) == "process") {
+      processBeingRead = line[8] - '0';
+      processBeingRead--; // starts 1 indexed, so reduce to 0
+      cout << "Switching to new process " << processBeingRead << endl;
+    } else if (lineStartsWithNum(line)) {
+      // got deadline + comp time, read next line too
+      auto &currentProcess = processes.at(processBeingRead);
+      currentProcess.deadline = stoi(line);
+      line = commandFileLines.at(i + 1); // next line
+      currentProcess.computationTime = stoi(line);
+      i++; // skip over
+
+      // sanity check
+      if (currentProcess.deadline < currentProcess.computationTime) {
+        printf(
+            "Process %d's computation time exceeds deadline. Impossible input.",
+            processBeingRead);
+        return 0;
+      }
+
+    } else { // got a command, add it to list
       processes.at(processBeingRead).commands.push_back(line);
     }
   }
+
+  return 0;
 
   int pnum = -1;
   int pid;
@@ -86,4 +105,6 @@ int main(int argc, char **args) {
       break;
     }
   }
+
+  // clean up stuff TODO
 }
