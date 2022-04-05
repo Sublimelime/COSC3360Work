@@ -23,19 +23,18 @@ int main(int argc, char **args) {
   fstream inFile1, inFile2;
   inFile1.open(args[1], ios::in);
   if (!inFile1.is_open()) {
-    printf("Unable to open matrix input file, exiting.\n");
+    printf("Unable to open many.txt input file, exiting.\n");
     return 1;
   }
 
   // holds lines from `many` file, used to setup program
   auto commandFileLines = vector<string>();
-  string line;
-
+  string inFile1Line;
   // read in all lines from file
   while (inFile1) {
-    getline(inFile1, line);
-    if (line != "") // ignore empty lines
-      commandFileLines.push_back(line);
+    getline(inFile1, inFile1Line);
+    if (inFile1Line != "") // ignore empty lines
+      commandFileLines.push_back(inFile1Line);
   }
   inFile1.close();
 
@@ -93,6 +92,25 @@ int main(int argc, char **args) {
       processes.at(processBeingRead).commands.push_back(line);
     }
   }
+
+  // second input file reading ------------------
+
+  inFile2.open(args[2], ios::in);
+  if (!inFile2.is_open()) {
+    printf("Unable to open many_words.txt input file, exiting.\n");
+    return 1;
+  }
+
+  // holds lines from `many_words` file
+  auto wordsFileLines = vector<string>();
+  string inFile2Line;
+  // read in all lines from file
+  while (inFile2) {
+    getline(inFile2, inFile2Line);
+    if (inFile2Line != "") // ignore empty lines
+      wordsFileLines.push_back(inFile2Line);
+  }
+  inFile2.close();
 
   return 0;
 
