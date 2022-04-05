@@ -46,12 +46,12 @@ int main(int argc, char **args) {
   // read available and max usage of resources per process, store this info
   int processInstructionBeginPoint;
   for (int i = 2; i < commandFileLines.size(); i++) {
-    if (commandFileLines.at(i).substr(0, 8) == "available") {
+    if (commandFileLines.at(i).substr(0, 9) == "available") {
       // going to just assume no more than 9
       int resource = commandFileLines.at(i)[10] - '0';
       int maximum = commandFileLines.at(i)[13] - '0';
       resourcesAvailable.at(resource) = maximum;
-    } else if (commandFileLines.at(i).substr(0, 2) == "max") {
+    } else if (commandFileLines.at(i).substr(0, 3) == "max") {
       // going to just assume no more than 9, one digit
       int process = commandFileLines.at(i)[4] - '0';
       int resource = commandFileLines.at(i)[6] - '0';
@@ -83,9 +83,9 @@ int main(int argc, char **args) {
       // sanity check
       if (currentProcess.deadline < currentProcess.computationTime) {
         printf(
-            "Process %d's computation time exceeds deadline. Impossible input.",
+            "Process %d's computation time exceeds deadline. Impossible input.\n",
             processBeingRead);
-        return 0;
+        return 1;
       }
 
     } else { // got a command, add it to list
