@@ -15,6 +15,9 @@ I elected to go with the following syntax:
 
 `./project2 many.txt many_words.txt`
 
+The many.txt and co. input files are included.
+
 ## Potential issues
 
-Assumed no more than 9 processes and resources/resource types, for simplicity.
+- Assumed no more than 9 processes and resources/resource types, for simplicity.
+- Didn't finish, even worse than first assignment. Only got far enough to parse input.
