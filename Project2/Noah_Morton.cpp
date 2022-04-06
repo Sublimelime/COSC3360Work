@@ -135,6 +135,7 @@ int main(int argc, char **args) {
       if (currentLine[x] == ',') {
         // when we hit a comma we finalize the entry and shift to the next
         resources.at(i).entries.push_back(entry);
+        entry = "";
         x += 2;
       } else {
         entry += currentLine[x];
@@ -142,8 +143,8 @@ int main(int argc, char **args) {
     }
   }
 
-  return 0;
 
+  // forking --------
   int pnum = -1;
   int pid;
   for (int k = 0; k < processes.size(); k++) {
@@ -151,6 +152,16 @@ int main(int argc, char **args) {
     if (pid == 0) {
       pnum = k;
       break;
+    }
+  }
+  if (pnum == -1) { //parent
+    //bankers alg and stuff TODO
+
+  } else if (pnum > 0) { // child
+    //begin interpreting commands
+    for(int i = 0; i<processes.at(pnum).commands.size(); i++) {
+      auto command = processes.at(pnum).commands.at(i);
+
     }
   }
 
