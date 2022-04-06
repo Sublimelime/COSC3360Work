@@ -143,7 +143,6 @@ int main(int argc, char **args) {
     }
   }
 
-
   // forking --------
   int pnum = -1;
   int pid;
@@ -154,16 +153,35 @@ int main(int argc, char **args) {
       break;
     }
   }
-  if (pnum == -1) { //parent
-    //bankers alg and stuff TODO
+  if (pnum == -1) { // parent
+    // bankers alg and stuff TODO
 
-  } else if (pnum > 0) { // child
-    //begin interpreting commands
-    for(int i = 0; i<processes.at(pnum).commands.size(); i++) {
+  } else if (pnum >= 0) { // child
+    // master string for the process
+    string masterString = "";
+    // begin interpreting commands
+    for (int i = 0; i < processes.at(pnum).commands.size(); i++) {
       auto command = processes.at(pnum).commands.at(i);
+      if (command.substr(0, 7) == "request") {
 
+      } else if (command.substr(0, 13) == "use_resources") {
+
+      } else if (command.substr(0, 7) == "release") {
+
+      } else if (command.substr(0, 9) == "calculate") {
+
+      } else if (command == "print_resources_used;") {
+        printf("I am process #%d, my master string is:\n%s\n", pnum,
+               masterString.c_str());
+      } else if (command == "end.") {
+        return 0; // terminate process
+      } else {
+        printf("Unexpected command '%s' received, terminating.\n",
+               command.c_str());
+      }
     }
   }
 
-  // clean up stuff TODO
+  // Parent cleans up stuff TODO
+  return 0;
 }
