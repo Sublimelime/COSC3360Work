@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdlib.h>
 #include <string>
 #include <sys/types.h>
@@ -9,6 +10,15 @@
 #include <vector>
 
 #include "ProcessInfo.h"
+
+// Convert hex to decimal
+// Pulled from https://stackoverflow.com/a/34795119
+template <typename T> bool hexToDec(const std::string &hexValue, T &result) {
+  std::stringstream ss;
+  ss << std::hex << hexValue;
+  ss >> result;
+  return !ss.fail();
+}
 
 int main(int argc, char *args[]) {
   using namespace std;
@@ -47,13 +57,14 @@ int main(int argc, char *args[]) {
   maxFreePoolSize = stoi(inputFileStrings.at(5));
   totalProcs = stoi(inputFileStrings.at(6));
 
-  //set up ids and processes' info
+  // set up ids and processes' info
   auto processes = vector<ProcessInfo>(totalProcs);
-  for(int i = 0; i < totalProcs; i++) {
-    string line = inputFileStrings.at(7+i);
-    processes.at(i).id = stoi(line.substr(0,4));
+  for (int i = 0; i < totalProcs; i++) {
+    string line = inputFileStrings.at(7 + i);
+    processes.at(i).id = stoi(line.substr(0, 4));
     processes.at(i).pageFramesOnDisk = stoi(line.substr(4));
   }
+
 
   return 0;
 }
