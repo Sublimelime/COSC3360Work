@@ -65,6 +65,13 @@ int main(int argc, char *args[]) {
     processes.at(i).pageFramesOnDisk = stoi(line.substr(4));
   }
 
+  //determine alg to use for page replacement
+  enum class PageReplaceAlg { FIFO, LRU, LRU_X, LFU, OPT, WS };
+  printf("What page replacement algorithm should be used?\nType a number:\n");
+  printf("0 - FIFO\n1 - LRU\n2 - LRU-X\n3 - LFU\n4 - OPT\n5 - Working Set\n");
+  int alg;
+  cin >> alg;
+  PageReplaceAlg replaceAlg = (PageReplaceAlg)alg;
 
   return 0;
 }
