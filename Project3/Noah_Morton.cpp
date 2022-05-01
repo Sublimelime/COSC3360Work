@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <vector>
 
+#include "ProcessInfo.h"
+
 int main(int argc, char *args[]) {
   using namespace std;
 
