@@ -47,5 +47,13 @@ int main(int argc, char *args[]) {
   maxFreePoolSize = stoi(inputFileStrings.at(5));
   totalProcs = stoi(inputFileStrings.at(6));
 
+  //set up ids and processes' info
+  auto processes = vector<ProcessInfo>(totalProcs);
+  for(int i = 0; i < totalProcs; i++) {
+    string line = inputFileStrings.at(7+i);
+    processes.at(i).id = stoi(line.substr(0,4));
+    processes.at(i).pageFramesOnDisk = stoi(line.substr(4));
+  }
+
   return 0;
 }
