@@ -11,7 +11,6 @@
 
 #include "ProcessInfo.h"
 
-
 // Convert hex letter to decimal
 int hexLetterToDec(char letter) {
   switch (letter) {
@@ -49,6 +48,23 @@ int hexLetterToDec(char letter) {
     return 15;
   }
   return -1;
+}
+
+// Checks for a hit within a process's page table.
+bool checkForHit(ProcessInfo proc, int num) {
+  for (int i = 0; i < proc.pageTableSize; i++)
+    if (proc.pageTable[i] == num)
+      return true;
+  return false;
+}
+
+// Attempts to get a process given its id. Returns null on fail.
+ProcessInfo *processFromID(int id, std::vector<ProcessInfo> &processes) {
+  for (int i = 0; i < processes.size(); i++) {
+    if (processes.at(i).id == id)
+      return &processes.at(i);
+  }
+  return nullptr;
 }
 
 int main(int argc, char *args[]) {
@@ -96,9 +112,15 @@ int main(int argc, char *args[]) {
   cin >> alg;
   PageReplaceAlg replaceAlg = (PageReplaceAlg)alg;
 
+  // holds info about all the simulated proccesses
+  auto processes = vector<ProcessInfo>();
+  for (int i = 0; i < totalProcs; i++) {
+    processes.push_back(ProcessInfo(100 + i, pageFramesPerProc));
+  }
+
   // forking
   int pnum = -1;
-  for (int k = 0; k < 3; k++) {
+  for (int k = 0; k < 2; k++) {
     if (fork() == 0) {
       pnum = k;
       break;
@@ -107,12 +129,24 @@ int main(int argc, char *args[]) {
 
   switch (pnum) {
   case -1: // Parent
+    for (int instIndex = 7; instIndex < inputFileStrings.size(); instIndex++) {
+      string request = inputFileStrings.at(instIndex);
+      // skip if end of process instruction
+      if (request[4] == '-')
+        continue;
+
+      int processID = stoi(request.substr(0, 4));
+      int pageNum = hexLetterToDec(request[6]);
+      ProcessInfo *process = processFromID(processID, processes);
+      if (process && !checkForHit(*process, pageNum)) {
+        process->pageFaultCount++;
+        // invoke PFR to do replace
+      }
+    }
     break;
   case 0: // Page fault replacer
     break;
   case 1: // Hard drive
-    break;
-  case 2: // page fault handler
     break;
   }
   return 0;
