@@ -11,13 +11,44 @@
 
 #include "ProcessInfo.h"
 
-// Convert hex to decimal
-// Pulled from https://stackoverflow.com/a/34795119
-template <typename T> bool hexToDec(const std::string &hexValue, T &result) {
-  std::stringstream ss;
-  ss << std::hex << hexValue;
-  ss >> result;
-  return !ss.fail();
+
+// Convert hex letter to decimal
+int hexLetterToDec(char letter) {
+  switch (letter) {
+  case '0':
+    return 0;
+  case '1':
+    return 1;
+  case '2':
+    return 2;
+  case '3':
+    return 3;
+  case '4':
+    return 4;
+  case '5':
+    return 5;
+  case '6':
+    return 6;
+  case '7':
+    return 7;
+  case '8':
+    return 8;
+  case '9':
+    return 9;
+  case 'A':
+    return 10;
+  case 'B':
+    return 11;
+  case 'C':
+    return 12;
+  case 'D':
+    return 13;
+  case 'E':
+    return 14;
+  case 'F':
+    return 15;
+  }
+  return -1;
 }
 
 int main(int argc, char *args[]) {
@@ -57,15 +88,7 @@ int main(int argc, char *args[]) {
   maxFreePoolSize = stoi(inputFileStrings.at(5));
   totalProcs = stoi(inputFileStrings.at(6));
 
-  // set up ids and processes' info
-  auto processes = vector<ProcessInfo>(totalProcs);
-  for (int i = 0; i < totalProcs; i++) {
-    string line = inputFileStrings.at(7 + i);
-    processes.at(i).id = stoi(line.substr(0, 4));
-    processes.at(i).pageFramesOnDisk = stoi(line.substr(4));
-  }
-
-  //determine alg to use for page replacement
+  // determine alg to use for page replacement
   enum class PageReplaceAlg { FIFO, LRU, LRU_X, LFU, OPT, WS };
   printf("What page replacement algorithm should be used?\nType a number:\n");
   printf("0 - FIFO\n1 - LRU\n2 - LRU-X\n3 - LFU\n4 - OPT\n5 - Working Set\n");
@@ -73,5 +96,24 @@ int main(int argc, char *args[]) {
   cin >> alg;
   PageReplaceAlg replaceAlg = (PageReplaceAlg)alg;
 
+  // forking
+  int pnum = -1;
+  for (int k = 0; k < 3; k++) {
+    if (fork() == 0) {
+      pnum = k;
+      break;
+    }
+  }
+
+  switch (pnum) {
+  case -1: // Parent
+    break;
+  case 0: // Page fault replacer
+    break;
+  case 1: // Hard drive
+    break;
+  case 2: // page fault handler
+    break;
+  }
   return 0;
 }
