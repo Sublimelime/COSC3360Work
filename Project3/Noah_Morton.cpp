@@ -95,7 +95,7 @@ int main(int argc, char *args[]) {
   }
   inFile.close();
 
-  // set statistic ints
+  // set statistic ints ----------------------
   totalPageFrames = stoi(inputFileStrings.at(0));
   pageSize = stoi(inputFileStrings.at(1));
   pageFramesPerProc = stoi(inputFileStrings.at(2));
@@ -105,7 +105,7 @@ int main(int argc, char *args[]) {
   totalProcs = stoi(inputFileStrings.at(6));
 
   // determine alg to use for page replacement
-  enum class PageReplaceAlg { FIFO, LRU, LRU_X, LFU, OPT, WS };
+  enum class PageReplaceAlg { FIFO, LRU, LRU_X, LFU, OPT, WS, RANDOM };
   printf("What page replacement algorithm should be used?\nType a number:\n");
   printf("0 - FIFO\n1 - LRU\n2 - LRU-X\n3 - LFU\n4 - OPT\n5 - Working Set\n");
   int alg;
@@ -118,7 +118,10 @@ int main(int argc, char *args[]) {
     processes.push_back(ProcessInfo(100 + i, pageFramesPerProc));
   }
 
-  // forking
+  // Shared mem and semaphores ------------------
+
+
+  // forking -----------------------
   int pnum = -1;
   for (int k = 0; k < 2; k++) {
     if (fork() == 0) {
@@ -140,14 +143,20 @@ int main(int argc, char *args[]) {
       ProcessInfo *process = processFromID(processID, processes);
       if (process && !checkForHit(*process, pageNum)) {
         process->pageFaultCount++;
+        printf("Got faulting request for process %d, request is %s, process "
+               "has faulted %d times.",
+               processID, request.c_str(), process->pageFaultCount);
+
         // invoke PFR to do replace
       }
     }
     break;
   case 0: // Page fault replacer
-    break;
+    return 0;
   case 1: // Hard drive
-    break;
+    return 0;
   }
+  // main func does cleanup
+
   return 0;
 }
