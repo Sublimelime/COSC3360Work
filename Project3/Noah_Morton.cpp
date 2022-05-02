@@ -4,6 +4,9 @@
 #include <sstream>
 #include <stdlib.h>
 #include <string>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -119,7 +122,12 @@ int main(int argc, char *args[]) {
   }
 
   // Shared mem and semaphores ------------------
-
+  // use student id to reduce chances of conflict - further shared mems are
+  // offset from this
+  const long sharedMemKey = 2086608;
+  int mainToPFR_ID = shmget(sharedMemKey, sizeof(int), 0666 | IPC_CREAT);
+  int mainToPFR_REQUEST =
+      shmget(sharedMemKey + 1, sizeof(int), 0666 | IPC_CREAT);
 
   // forking -----------------------
   int pnum = -1;
@@ -147,9 +155,19 @@ int main(int argc, char *args[]) {
                "has faulted %d times.",
                processID, request.c_str(), process->pageFaultCount);
 
-        // invoke PFR to do replace
+        // invoke PFR to do replace -------------------
+        //attach shared mem
+        void* mainToPFR_ID_PTR = shmat(sharedMemKey, 0, 0);
+        void* mainToPFR_REQUEST_PTR = shmat(sharedMemKey+1, 0, 0);
+
+
+        //detach shared mem when done
+        shmdt(mainToPFR_ID_PTR);
+        shmdt(mainToPFR_REQUEST_PTR);
       }
     }
+
+
     break;
   case 0: // Page fault replacer
     return 0;
@@ -157,6 +175,8 @@ int main(int argc, char *args[]) {
     return 0;
   }
   // main func does cleanup
+  semctl(sharedMemKey, 0, IPC_RMID, 0);
+  semctl(sharedMemKey+1, 0, IPC_RMID, 0);
 
   return 0;
 }
